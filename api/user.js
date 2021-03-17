@@ -17,3 +17,20 @@ export const registerAPI = data => {
     data
   })
 }
+
+// 获取用户信息
+export const getUserAPI = () => {
+  return request({
+    method: 'GET',
+    url: '/api/user'
+  })
+}
+
+// 获取用户信息
+export const setUserAPI = data => {
+  return request({
+    method: 'PUT',
+    url: '/api/user',
+    data
+  })
+}

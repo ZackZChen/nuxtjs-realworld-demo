@@ -56,6 +56,7 @@
                 class="btn btn-lg pull-xs-right btn-primary"
                 type="button"
                 @click="onPost"
+                :disabled="formDisabled"
               >
                 Publish Article
               </button>
@@ -91,7 +92,6 @@ export default {
       const { data } = await postArticleAPI({
         article: this.article
       })
-      console.log('data', data)
       if (data.article) {
         this.$router.push({
           name: 'article',
