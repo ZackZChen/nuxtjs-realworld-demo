@@ -10,6 +10,8 @@
                   type="text"
                   class="form-control form-control-lg"
                   placeholder="Article Title"
+                  v-model="article.title"
+                  :disabled="formDisabled"
                 />
               </fieldset>
               <fieldset class="form-group">
@@ -17,6 +19,8 @@
                   type="text"
                   class="form-control"
                   placeholder="What's this article about?"
+                  v-model="article.description"
+                  :disabled="formDisabled"
                 />
               </fieldset>
               <fieldset class="form-group">
@@ -24,6 +28,8 @@
                   class="form-control"
                   rows="8"
                   placeholder="Write your article (in markdown)"
+                  v-model="article.body"
+                  :disabled="formDisabled"
                 ></textarea>
               </fieldset>
               <fieldset class="form-group">
@@ -31,12 +37,25 @@
                   type="text"
                   class="form-control"
                   placeholder="Enter tags"
+                  v-model="tag"
+                  @keyup.enter="addTag"
+                  :disabled="formDisabled"
                 />
-                <div class="tag-list"></div>
+                <div class="tag-list">
+                  <span
+                    v-for="(tag, idx) in article.tagList"
+                    :key="idx"
+                    class="tag-default tag-pill"
+                  >
+                    <i class="ion-close-round" />
+                    {{ tag }}
+                  </span>
+                </div>
               </fieldset>
               <button
                 class="btn btn-lg pull-xs-right btn-primary"
                 type="button"
+                @click="onPost"
               >
                 Publish Article
               </button>
@@ -49,9 +68,44 @@
 </template>
 
 <script>
+import { postArticleAPI } from '@/api/article'
+
 export default {
   middleware: 'authenticated',
-  name: 'EditorPage'
+  name: 'EditorPage',
+  data() {
+    return {
+      article: {
+        title: '',
+        description: '',
+        body: '',
+        tagList: []
+      },
+      tag: '',
+      formDisabled: false
+    }
+  },
+  methods: {
+    async onPost() {
+      this.formDisabled = true
+      const { data } = await postArticleAPI({
+        article: this.article
+      })
+      console.log('data', data)
+      if (data.article) {
+        this.$router.push({
+          name: 'article',
+          params: { slug: data.article.slug }
+        })
+      }
+    },
+    addTag() {
+      if (!this.article.tagList.includes(this.tag)) {
+        this.article.tagList.push(this.tag)
+      }
+      this.tag = ''
+    }
+  }
 }
 </script>
 

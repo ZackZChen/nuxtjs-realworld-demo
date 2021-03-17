@@ -65,3 +65,11 @@ export const deleteCommentsAPI = ({ slug, id }) => {
     url: `/api/articles/${slug}/comments/${id}`
   })
 }
+// 发布文章
+export const postArticleAPI = data => {
+  return request({
+    method: 'POST',
+    url: `/api/articles`,
+    data
+  })
+}
