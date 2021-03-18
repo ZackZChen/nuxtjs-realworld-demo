@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="!articles.length" class="article-preview">
+      No articles are here... yet.
+    </div>
     <div class="article-preview" v-for="item in articles" :key="item.slug">
       <div class="article-meta">
         <nuxt-link

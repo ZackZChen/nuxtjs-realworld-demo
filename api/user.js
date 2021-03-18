@@ -18,7 +18,7 @@ export const registerAPI = data => {
   })
 }
 
-// 获取用户信息
+// 获取当前用户信息
 export const getUserAPI = () => {
   return request({
     method: 'GET',
@@ -26,11 +26,35 @@ export const getUserAPI = () => {
   })
 }
 
-// 获取用户信息
+// 设置用户信息
 export const setUserAPI = data => {
   return request({
     method: 'PUT',
     url: '/api/user',
     data
+  })
+}
+
+// 获取用户信息
+export const getProfileAPI = username => {
+  return request({
+    method: 'GET',
+    url: `/api/profiles/${username}`
+  })
+}
+
+// 关注用户
+export const followAPI = username => {
+  return request({
+    method: 'POST',
+    url: `/api/profiles/${username}/follow`
+  })
+}
+
+// 取消关注用户
+export const unfollowAPI = username => {
+  return request({
+    method: 'DELETE',
+    url: `/api/profiles/${username}/follow`
   })
 }

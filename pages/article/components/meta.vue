@@ -18,18 +18,7 @@
       >
       <span class="date">{{ article.createdAt | date('MMMM DD, YYYY') }}</span>
     </div>
-    <button
-      :class="[
-        'btn',
-        'btn-sm',
-        'btn-outline-secondary',
-        { active: article.author.following }
-      ]"
-    >
-      <i class="ion-plus-round"></i>
-      &nbsp; Follow {{ article.author.username }}
-      <!-- <span class="counter">(10)</span> -->
-    </button>
+    <follow :user-info="article.author" />
     &nbsp;&nbsp;
     <button
       :class="[

@@ -4,15 +4,19 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img :src="user.image" class="user-img" />
-            <h4>{{ user.username }}</h4>
+            <img :src="profile.image" class="user-img" />
+            <h4>{{ profile.username }}</h4>
             <p>
-              {{ user.bio }}
+              {{ profile.bio }}
             </p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
-              <i class="ion-plus-round"></i>
-              &nbsp; Follow {{ user.username }}
-            </button>
+            <nuxt-link
+              v-if="user.username === profile.username"
+              class="btn btn-sm btn-outline-secondary action-btn"
+              to="/settings"
+            >
+              <i class="ion-gear-a"></i> Edit Profile Settings
+            </nuxt-link>
+            <follow v-else :user-info="profile" />
           </div>
         </div>
       </div>
@@ -30,7 +34,7 @@
                   :to="{
                     name: 'profile',
                     params: {
-                      username: user.username
+                      username: profile.username
                     }
                   }"
                 >
@@ -44,7 +48,7 @@
                   :to="{
                     name: 'profile',
                     params: {
-                      username: user.username
+                      username: profile.username
                     },
                     query: { tab: 'favorited_article' }
                   }"
@@ -65,11 +69,12 @@
 import { mapState } from 'vuex'
 import ArticleList from './components/articleList'
 import { getArticlesAPI } from '@/api/article'
+import { getProfileAPI } from '@/api/user'
 
 export default {
   middleware: 'authenticated',
   name: 'ProfilePage',
-  async asyncData({ query, store }) {
+  async asyncData({ query, params }) {
     const page = +(query.page || 1)
     const limit = 20
     const { tab = 'my_articles' } = query
@@ -78,26 +83,31 @@ export default {
       offset: (page - 1) * limit
     }
     if (tab === 'favorited_article') {
-      apiParams.favorited = store.state.user.username
+      apiParams.favorited = params.username
     } else {
-      apiParams.author = store.state.user.username
+      apiParams.author = params.username
     }
-    const articleRes = await getArticlesAPI(apiParams)
+    const [articleRes, userInfo] = await Promise.all([
+      getArticlesAPI(apiParams),
+      getProfileAPI(params.username)
+    ])
     const { articles, articlesCount } = articleRes.data
+    const { profile } = userInfo.data
     articles.forEach((i) => (i.favoriteDisabled = false))
     return {
       articles,
       articlesCount,
       limit,
       page,
-      tab
+      tab,
+      profile
     }
   },
-  watchQuery: ['tab'],
-  components: { ArticleList },
   computed: {
     ...mapState(['user'])
-  }
+  },
+  watchQuery: ['tab'],
+  components: { ArticleList }
 }
 </script>
 
